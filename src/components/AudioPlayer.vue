@@ -47,7 +47,7 @@
     </div>
 
     <div class="queue-info" v-if="queue.length > 1">
-      <span>{{ queue.findIndex(song => song.id === currentSong.id) + 1 }} of {{ queue.length }} in queue</span>
+      <span>{{ currentSongPosition }} of {{ queue.length }} in queue</span>
       <button class="clear-btn" @click="$emit('clear-queue')" title="Clear queue">
         <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
           <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" fill="currentColor"/>
@@ -58,8 +58,8 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted, watch } from 'vue';
-import { Song } from '../types';
+import { ref, onMounted, onUnmounted, watch, computed } from 'vue';
+import type { Song } from '../services/musicService';
 
 const props = defineProps<{
   currentSong: Song | null;
@@ -76,6 +76,11 @@ const audio = ref<HTMLAudioElement | null>(null);
 const isPlaying = ref(false);
 const currentTime = ref(0);
 const duration = ref(0);
+
+const currentSongPosition = computed(() => {
+  if (!props.currentSong) return 0;
+  return props.queue.findIndex(song => song.id === props.currentSong?.id) + 1;
+});
 
 const getImageUrl = (song: Song) => {
   const image = song.image.find(img => img.quality === '500x500') || song.image[0];

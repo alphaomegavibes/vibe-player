@@ -59,7 +59,7 @@
 </template>
 
 <script setup lang="ts">
-import { Song } from '../types';
+import type { Song } from '../services/musicService';
 import { ref } from 'vue';
 
 defineProps<{
