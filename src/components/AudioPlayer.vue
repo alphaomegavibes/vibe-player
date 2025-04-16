@@ -131,15 +131,18 @@ const handleEnded = () => {
 const downloadSong = async () => {
   if (!props.currentSong) return;
   
-  // Get the highest quality audio URL
+  // Get the highest quality audio URL and ensure it uses HTTPS
   const highestQualityUrl = props.currentSong.downloadUrl.find(url => url.quality === '320kbps')?.url || 
                            props.currentSong.downloadUrl[props.currentSong.downloadUrl.length - 1]?.url;
   
   if (!highestQualityUrl) return;
 
+  // Replace http:// with https:// in the URL
+  const secureUrl = highestQualityUrl.replace('http://', 'https://');
+
   try {
-    // Fetch the audio file
-    const response = await fetch(highestQualityUrl);
+    // Fetch the audio file using the secure URL
+    const response = await fetch(secureUrl);
     if (!response.ok) throw new Error('Failed to download song');
     
     // Get the audio data as a blob

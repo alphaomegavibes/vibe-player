@@ -87,18 +87,21 @@ const getPrimaryArtists = (song: Song) => {
 const downloadSong = async (song: Song) => {
   if (downloadingSongs.value[song.id]) return;
   
-  // Get the highest quality audio URL
+  // Get the highest quality audio URL and ensure it uses HTTPS
   const highestQualityUrl = song.downloadUrl.find(url => url.quality === '320kbps')?.url || 
                            song.downloadUrl[song.downloadUrl.length - 1]?.url;
   
   if (!highestQualityUrl) return;
 
+  // Replace http:// with https:// in the URL
+  const secureUrl = highestQualityUrl.replace('http://', 'https://');
+
   try {
     downloadingSongs.value[song.id] = true;
     downloadProgress.value[song.id] = 0;
 
-    // Fetch the audio file
-    const response = await fetch(highestQualityUrl);
+    // Fetch the audio file using the secure URL
+    const response = await fetch(secureUrl);
     if (!response.ok) throw new Error('Failed to download song');
     
     const contentLength = response.headers.get('content-length');
